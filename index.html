@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Gif Tastic: Pokemon Edition | Ben Leone</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- <link rel="stylesheet" href="#"> -->
+  </head>
+  <body>
+    <h1>Gif Tastic: Pokemon Edition</h1>
+    <!-- New buttons will be put in this div -->
+    <div id="button-view"></div>
+    <form id="search-form">
+      <label for="search-input">Search for more!</label>
+      <input type="text" name="search" id="search-input" />
+      <br />
+      <input type="submit" id="add-search" value="Add Search!" />
+    </form>
+    <div id="gif-box"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript">
+      var itemArray = ["Pikachu", "Weedle", "Squirtle", "Bulbasaur"];
+
+      function renderButtons() {
+        $("#button-view").empty();
+
+        for (var i = 0; i < itemArray.length; i++) {
+          var a = $("<button>");
+          a.addClass("item-btn");
+          a.attr("data-name", itemArray[i]);
+          a.text(itemArray[i]);
+          $("#button-view").append(a);
+        }
+      }
+
+      $("#add-search").on("click", function(event) {
+        event.preventDefault();
+        var item = $("#search-input")
+          .val()
+          .trim();
+
+        itemArray.push(item);
+
+        renderButtons();
+
+        $("#search-input").val("");
+      });
+
+      $(document).on("click", "button", function() {
+        var itemClick = $(this).attr("data-name");
+        console.log(itemClick);
+
+        var queryURL =
+          "http://api.giphy.com/v1/gifs/search?q=" +
+          itemClick +
+          "&api_key=WcVnweyrkh4As8yfYsVjXjdxqEWdkgqW&limit=10";
+
+        $.ajax({
+          url: queryURL,
+          method: "GET"
+        }).then(function(response) {
+          var results = response.data;
+          console.log(results);
+
+          for (var i = 0; i < results.length; i++) {
+            if (results[i].rating !== "r" && results[i].rating !== "pg-13") {
+              var gifDiv = $("<div>");
+              var rating = results[i].rating;
+              var p = $("<p>").text("Rating: " + rating.toUpperCase());
+              var itemImage = $("<img>");
+              itemImage.attr({
+                src: results[i].images.fixed_width_still.url,
+                "data-still": results[i].images.fixed_width_still.url,
+                "data-animate": results[i].images.fixed_width.url,
+                "data-state": "still"
+              });
+              gifDiv.append(itemImage);
+              gifDiv.append(p);
+              $("#gif-box").prepend(gifDiv);
+            }
+          }
+        });
+      });
+
+      $(document).on("click", "img", function() {
+        var state = $(this).attr("data-state");
+
+        if (state === "still") {
+          $(this).attr("src", $(this).attr("data-animate"));
+          $(this).attr("data-state", "animate");
+        } else {
+          $(this).attr("src", $(this).attr("data-still"));
+          $(this).attr("data-state", "still");
+        }
+      });
+
+      renderButtons();
+    </script>
+  </body>
+</html>
