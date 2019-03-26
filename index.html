@@ -4,12 +4,12 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Gif Tastic: Pokemon Edition | Ben Leone</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- <link rel="stylesheet" href="#"> -->
   </head>
   <body>
     <h1>Gif Tastic: Pokemon Edition</h1>
+
     <!-- New buttons will be put in this div -->
     <div id="button-view"></div>
     <form id="search-form">
@@ -18,6 +18,8 @@
       <br />
       <input type="submit" id="add-search" value="Add Search!" />
     </form>
+
+    <!-- Gifs will be added to this div on button click -->
     <div id="gif-box"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -54,7 +56,7 @@
         console.log(itemClick);
 
         var queryURL =
-          "http://api.giphy.com/v1/gifs/search?q=" +
+          "https://api.giphy.com/v1/gifs/search?q=" +
           itemClick +
           "&api_key=WcVnweyrkh4As8yfYsVjXjdxqEWdkgqW&limit=10";
 
@@ -64,6 +66,7 @@
         }).then(function(response) {
           var results = response.data;
           console.log(results);
+          $("#gif-box").empty();
 
           for (var i = 0; i < results.length; i++) {
             if (results[i].rating !== "r" && results[i].rating !== "pg-13") {
